@@ -1,13 +1,8 @@
 package main
 
 import (
-	"encoding/csv"
-	"fmt"
-	"log"
 	"math"
 	"math/rand"
-	"os"
-	"strconv"
 
 	"github.com/gonum/stat"
 	"gonum.org/v1/gonum/mat"
@@ -208,81 +203,4 @@ func Accuracy(predicted []float64, actual []float64) float64 {
 		}
 	}
 	return (float64(nCorrect) / float64(n)) * 100
-}
-
-func main() {
-
-	// Read data from CSV file
-	file, err := os.Open("C:/Users/rbadr/Downloads/diabetes.csv")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	reader := csv.NewReader(file)
-	// Exclude first row which contains variable names
-	if _, err := reader.Read(); err != nil {
-		log.Fatal(err)
-	}
-
-	records, err := reader.ReadAll()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Extract features and target variable
-	var x [][]float64
-	var y []float64
-
-	for _, record := range records {
-		xRow := make([]float64, 0, len(record)-1)
-		for i, value := range record {
-			if i != len(record)-1 {
-				val, err := strconv.ParseFloat(value, 64)
-				if err != nil {
-					log.Fatal(err)
-				}
-				xRow = append(xRow, val)
-			} else {
-				val, err := strconv.ParseFloat(value, 64)
-				if err != nil {
-					log.Fatal(err)
-				}
-				y = append(y, val)
-			}
-		}
-		x = append(x, xRow)
-	}
-
-	scaledX := ScaleFeatures(x)
-	//scaledY := scaleLabels(y)
-
-	//train_x, test_x, train_y, test_y := split(scaledX, y, 0.2, 61)
-
-	//train the SVM model
-	svm := SVM{degree: 3, C: 4, gamma: 0.2, coef0: 1}
-
-	//svm.train(train_x, train_y)
-	svm.Train(scaledX, y)
-
-	testdata := []float64{5, 124, 74, 0, 0, 34, 0.22, 38}
-	scaledTestData := ScaleLabels(testdata)
-	predicted := svm.Predict(scaledTestData)
-	//fmt.Println("Scaled Test data", scaledTestData)
-	//fmt.Println("Scaled Test data", scaledX)
-	fmt.Printf("Predicted value is: %v\n", predicted)
-
-	//CHECK ACCURACY
-	// predicted := make([]float64, len(test_x))
-	// for i, x := range test_x {
-	// 	predicted[i] = svm.predict(x)
-	// }
-
-	// acc := accuracy(predicted, test_y)
-
-	// fmt.Printf("Accuracy is: %v\n", acc)
-
-	//fmt.Println(predicted)
-	//fmt.Println(test_y)
-
 }

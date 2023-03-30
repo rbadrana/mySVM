@@ -4,6 +4,8 @@ go 1.20
 
 require github.com/gonum/stat v0.0.0-20181125101827-41a0da705a5b
 
+require github.com/gonum/integrate v0.0.0-20181209220457-a422b5c0fdf2 // indirect
+
 require (
 	github.com/gonum/blas v0.0.0-20181208220705-f22b278b28ac // indirect
 	github.com/gonum/floats v0.0.0-20181209220543-c233463c7e82 // indirect
