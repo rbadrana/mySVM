@@ -1,4 +1,4 @@
-package mysvm
+package main
 
 import (
 	"encoding/csv"
