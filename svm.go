@@ -9,7 +9,7 @@ import (
 )
 
 type SVM struct {
-	degree float64
+	Degree float64
 	C      float64
 	alpha  []float64
 	b      float64
