@@ -11,16 +11,16 @@ import (
 type SVM struct {
 	Degree float64
 	C      float64
-	alpha  []float64
+	Alpha  []float64
 	b      float64
 	X      *mat.Dense
 	Y      []float64
-	gamma  float64
-	coef0  float64
+	Gamma  float64
+	Coef0  float64
 }
 
 func (svm SVM) RBFKernel(x1, x2 []float64) float64 {
-	gamma := svm.gamma
+	gamma := svm.Gamma
 	norm := 0.0
 	for i := 0; i < len(x1); i++ {
 		norm += math.Pow(x1[i]-x2[i], 2)
@@ -34,7 +34,7 @@ func (svm SVM) PolyKernel(x1, x2 []float64) float64 {
 		dot += x1[i] * x2[i]
 	}
 	value := svm.C + dot
-	return math.Pow(value, float64(svm.degree))
+	return math.Pow(value, float64(svm.Degree))
 }
 
 func (svm SVM) SigmoidKernel(x1, x2 []float64) float64 {
@@ -42,7 +42,7 @@ func (svm SVM) SigmoidKernel(x1, x2 []float64) float64 {
 	for i := 0; i < len(x1); i++ {
 		dot += x1[i] * x2[i]
 	}
-	value := svm.gamma*dot + svm.coef0
+	value := svm.Gamma*dot + svm.Coef0
 	return math.Tanh(value)
 }
 
@@ -100,13 +100,13 @@ func (svm *SVM) Train(x [][]float64, y []float64) {
 	for i := 0; i < len(x); i++ {
 		alpha[i] *= svm.Y[i]
 	}
-	svm.alpha = alpha
+	svm.Alpha = alpha
 
 	// Compute the value of svm.b
 	var bSum float64
 	numSupportVectors := float64(len(supportVectors))
 	for _, i := range supportVectors {
-		bSum += svm.Y[i] - mat.Dot(mat.NewVecDense(len(x), svm.alpha), gramMatrix.RowView(i))
+		bSum += svm.Y[i] - mat.Dot(mat.NewVecDense(len(x), svm.Alpha), gramMatrix.RowView(i))
 	}
 	svm.b = bSum / numSupportVectors
 }
@@ -114,11 +114,11 @@ func (svm *SVM) Train(x [][]float64, y []float64) {
 func (svm SVM) Predict(testdata []float64) float64 {
 	result := 0.0
 
-	for i := 0; i < len(svm.alpha); i++ {
+	for i := 0; i < len(svm.Alpha); i++ {
 		dotProduct := svm.PolyKernel(svm.X.RawRowView(i), testdata)
 		//dotProduct := svm.RBFKernel(svm.X.RawRowView(i), testdata)
 		//dotProduct := svm.sigmoidKernel(svm.X.RawRowView(i), testdata)
-		result += svm.alpha[i] * svm.Y[i] * dotProduct
+		result += svm.Alpha[i] * svm.Y[i] * dotProduct
 	}
 	result += svm.b
 	//return result
